@@ -1,0 +1,7 @@
+# Personal Config
+# Store device name/id if multiple devices
+# Lines with # are comments
+# any other lines need to be "key:value" no spaces!
+# lines may not exceed 64 chars
+# value may not exceed 30 chars
+name:robo1

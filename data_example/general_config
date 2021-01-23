@@ -1,0 +1,9 @@
+# General Config
+# Lines with # are comments
+# any other lines need to be "key:value" no spaces!
+# lines may not exceed 64 chars
+# value may not exceed 30 chars
+wifi_ssid:foo
+wifi_pw:bar
+mqtt_broker:127.0.01
+mqtt_port:1883
