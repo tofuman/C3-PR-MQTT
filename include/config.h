@@ -7,10 +7,13 @@ class Config {
     public:
         Config();
         bool parse(const char *config_file);
+        //general
         char* get_wifi_ssid() { return wifi_ssid;};
         char* get_wifi_pw() {return wifi_pw;};
         char* get_mqtt_broker_ip() { return mqtt_broker;};
         int get_mqtt_broker_port() { return mqtt_port;};
+        //personal
+        char* get_name() { return name;};
     private:
         //general
         char wifi_ssid[30];

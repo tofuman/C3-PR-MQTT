@@ -15,7 +15,7 @@
 // This will be displayed to identify the firmware
 char myVer[] PROGMEM = __DATE__ " @ " __TIME__;
 
-RoboBrain::RoboBrain() :motor()
+RoboBrain::RoboBrain() :motor(), coms(), http_server()
 {
     Serial.begin(115200);
     Serial.setDebugOutput(true);
@@ -26,12 +26,12 @@ RoboBrain::RoboBrain() :motor()
 
     setup_led();
 
-    Config general_config = Config();
-    if (!general_config.parse(GENERAL_CONFIG_FILE))
+    config = Config();
+    if (!config.parse(GENERAL_CONFIG_FILE))
         halt_and_blink();
-    if (!general_config.parse(VIDEO_CONFIG_FILE))
+    if (!config.parse(VIDEO_CONFIG_FILE))
         halt_and_blink();
-    if (!general_config.parse(PERSONAL_CONFIG_FILE))
+    if (!config.parse(PERSONAL_CONFIG_FILE))
         halt_and_blink();
 
     
@@ -39,9 +39,9 @@ RoboBrain::RoboBrain() :motor()
     // Feedback that hardware init is complete and we are now attempting to connect
     Serial.println("");
     Serial.print("Connecting to Wifi network: ");
-    Serial.println(general_config.get_wifi_ssid());
+    Serial.println(config.get_wifi_ssid());
 
-    WiFi.begin(general_config.get_wifi_ssid(), general_config.get_wifi_pw());
+    WiFi.begin(config.get_wifi_ssid(), config.get_wifi_pw());
 
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -51,12 +51,11 @@ RoboBrain::RoboBrain() :motor()
     }
 
     // feedback that we are connected
-    Serial.println("WiFi connected IP:");
+    Serial.print("WiFi connected IP:");
     IPAddress ip = WiFi.localIP();
     Serial.println(ip);
-    Serial.println("");
-
-    if (!mqtt.setup(&general_config))
+    
+    if (!coms.setup(&config))
         halt_and_blink();
     Serial.println("MQTT Ready");
 
@@ -69,7 +68,15 @@ RoboBrain::RoboBrain() :motor()
 
 void RoboBrain::tick()
 {
-    mqtt.tick();
+    if(WiFi.status() != WL_CONNECTED){
+        WiFi.reconnect();
+    }
+    coms.tick();
+    Message* new_message = coms.fetch_message();
+    if (new_message) {
+        Serial.println("Got a Message to the top!");
+        delete new_message;
+    }
     flashLED(200); //blink led as heartbeat
     // Just loop forever.
     // The stream and URI handler processes initiated by the startCameraServer() call at the
