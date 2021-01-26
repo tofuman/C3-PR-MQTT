@@ -74,7 +74,9 @@ void RoboBrain::tick()
     coms.tick();
     Message* new_message = coms.fetch_message();
     if (new_message) {
-        Serial.println("Got a Message to the top!");
+        if (new_message->get_type() == MESSAGE_ACTION) {
+            motor.action(new_message);
+        }
         delete new_message;
     }
     flashLED(200); //blink led as heartbeat

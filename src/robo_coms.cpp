@@ -11,21 +11,21 @@ bool RoboComs::setup(Config* config)
 
     res = mqtt.setup(config);
     if (res) {
-        strcpy(topic, TOPIC_RECV_ACTION);
-        strcpy(topic+ strlen(TOPIC_RECV_ACTION), config->get_name());
+        strcpy(topic, TOPIC_RECV_ACTION.c_str());
+        strcpy(topic+ strlen(TOPIC_RECV_ACTION.c_str()), config->get_name());
         res = mqtt.subscribe(topic);
     }
     if (res) {
-        strcpy(topic, TOPIC_RECV_SETTING);
-        strcpy(topic+ strlen(TOPIC_RECV_SETTING), config->get_name());
+        strcpy(topic, TOPIC_RECV_SETTING.c_str());
+        strcpy(topic+ strlen(TOPIC_RECV_SETTING.c_str()), config->get_name());
         res = mqtt.subscribe(topic);
     }
     if (res) {
-        strcpy(topic, TOPIC_RECV_ALL);
+        strcpy(topic, TOPIC_RECV_ALL.c_str());
         res = mqtt.subscribe(topic);
     }
     if (res) {
-        strcpy(topic, TOPIC_SEND_REGISTER);
+        strcpy(topic, TOPIC_SEND_REGISTER.c_str());
         res = mqtt.publish(topic, config->get_name());
     }
 
@@ -35,30 +35,42 @@ bool RoboComs::setup(Config* config)
 
 void RoboComs::tick()
 {
-    bool res= false;
     char topic[30];
     mqtt.tick();
-    strcpy(topic, TOPIC_SEND_STATUS);
-    strcpy(topic+ strlen(TOPIC_SEND_STATUS), config->get_name());
-    res = mqtt.publish(topic, "pingubert");
+    strcpy(topic, TOPIC_SEND_STATUS.c_str());
+    strcpy(topic+ strlen(TOPIC_SEND_STATUS.c_str()), config->get_name());
+    mqtt.publish(topic, "pingubert");
 }
 
 Message* RoboComs::fetch_message() {
-    Message* ret = NULL;
-    int pending = mqtt.get_messages_pending();
-    if (pending != 0) 
-    {
-        ret = mqtt.get_message();
-
+    Message* ret = mqtt.get_message();;
+    if (ret != NULL) {
+        //returns false if topic is not a valid topic
+        if(!parse_type(&ret)){
+            delete ret;
+            ret = NULL;
+        }
     }
     return ret;
 
 }
 
 
-void RoboComs::parse_type(Message** message)
+bool RoboComs::parse_type(Message** message)
 {
     Message* message_ptr = *message;
     std::string topic = message_ptr->get_topic();
+    if(topic.rfind(TOPIC_RECV_ACTION, 0) == 0) {
+        message_ptr->set_type(MESSAGE_ACTION);
+    } else if (topic.rfind(TOPIC_RECV_SETTING, 0) == 0) {
+        message_ptr->set_type(MESSAGE_SETTING);
+    } else if (topic.rfind(TOPIC_RECV_ALL, 0) == 0) {
+        message_ptr->set_type(MESSAGE_ALL);
+    } else {
+        Serial.println("Unknown Message Topic!");
+        return false;
+    }
+
+    return true;
 
 }

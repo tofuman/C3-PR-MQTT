@@ -3,12 +3,12 @@
 
 #include "mqtt_client.h"
 
-#define TOPIC_RECV_ACTION "action/"
-#define TOPIC_RECV_SETTING "setting/"
-#define TOPIC_RECV_ALL "all"
+static const std::string TOPIC_RECV_ACTION = std::string("action/");
+static const std::string TOPIC_RECV_SETTING = std::string("setting/");
+static const std::string  TOPIC_RECV_ALL = std::string("all");
 
-#define TOPIC_SEND_STATUS "status/"
-#define TOPIC_SEND_REGISTER "register"
+static const std::string TOPIC_SEND_STATUS = std::string("status/");
+static const std::string TOPIC_SEND_REGISTER = std::string("register");
 
 class RoboComs {
     public:
@@ -21,7 +21,7 @@ class RoboComs {
         MqttClient mqtt;
         Config *config;
 
-        void parse_type(Message** message);
+        bool parse_type(Message** message);
 };
 
 
