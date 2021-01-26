@@ -17,7 +17,11 @@ class Motor {
     private:
         int speed_left = 100;
         int speed_right = 100;
-        hw_timer_t * timer = NULL;
+        int lamp_value = 100; // Current Lamp value, range 0-100
+        float lampR; // The R value in the PWM graph equation (calculated in setup)
+
+        hw_timer_t * motor_timer = NULL;
+        hw_timer_t * flash_timer = NULL;
         void drive(int left, int right);
         
 

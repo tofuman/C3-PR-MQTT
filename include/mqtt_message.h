@@ -47,14 +47,21 @@ class Message
         std::string get_message() {return message;};
         std::string get_topic() {return topic;};
         MessageType get_type() {return type;};
+        MessageAction get_action() {
+            if (get_type() == MESSAGE_ACTION) {
+                return content.action;
+            }
+            return ACTION_NONE;
+        }
         void set_type(MessageType type) {this->type = type;};
-        
+        void set_action(MessageAction content) {this->content.action = content;};
 
     private:
         std::string topic;
         std::string message;
         bool is_empty = true;
         MessageType type = MESSAGE_NONE;
+        MessageContent content;
 };
 
 #endif
