@@ -15,7 +15,8 @@ A number of points contibute to this work:
   
 
 ## TODOs:
-- [ ] video settings file is currently ignored
-- [ ] MQTT messages are currently just pushed up to robobrain need parsing
-- [ ] config is ignored for topics
-- [ ] No Motor controll is implemented yet, but drivers are initated.
+- [ ] settings file is currently ignored, both for video as well as motor calibration
+- [ ] No Status reports are send back to server
+- [ ] No "All" cmds are implemented. E.g. reboot and halt movement.
+- [ ] Motor controll is implemented but no tweaks on strength and duration are done
+ - [ ] Make settings persisten by writing them to flash
